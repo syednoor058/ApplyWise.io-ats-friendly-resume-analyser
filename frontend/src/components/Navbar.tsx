@@ -9,12 +9,6 @@ import PrimaryButton from './ui/PrimaryButton';
 import Logo from './ui/logo';
 import Image from 'next/image';
 
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
-}
-
 function truncateName(name: string, max = 12): string {
   return name.length > max ? name.slice(0, max) + '…' : name;
 }
@@ -59,7 +53,7 @@ export default function Navbar() {
     if (!user) return;
     setIsVerifying(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/verify-email', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email }),

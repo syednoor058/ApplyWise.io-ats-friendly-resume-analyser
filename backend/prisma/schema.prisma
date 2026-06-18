@@ -1,0 +1,55 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id              String            @id @default(uuid())
+  email           String            @unique
+  passwordHash    String
+  name            String
+  isVerified      Boolean           @default(false)
+  userJobAnalyses UserJobAnalysis[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model JobDescription {
+  id              String            @id @default(uuid())
+  companyName     String
+  role            String
+  description     String
+  salary          String            @default("Negotiable")
+  userJobAnalyses UserJobAnalysis[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Analysis {
+  id              String            @id @default(uuid())
+  overallScore    Int
+  atsScore        Int
+  skillsScore     Int
+  structureScore  Int
+  styleScore      Int
+  analysisResult  Json              // Detailed JSON feedback from OpenAI (overall, ats, skills, style, structure)
+  userJobAnalyses UserJobAnalysis[]
+  createdAt       DateTime          @default(now())
+}
+
+model UserJobAnalysis {
+  id               String         @id @default(uuid())
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobDescriptionId String
+  jobDescription   JobDescription @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  analysisId       String
+  analysis         Analysis       @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+}

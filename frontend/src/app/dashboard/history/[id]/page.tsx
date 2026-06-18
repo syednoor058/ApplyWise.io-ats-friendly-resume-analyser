@@ -105,6 +105,7 @@ export default function AnalysisDetailPage() {
   const [data, setData] = useState<AnalysisDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     if (!initialized) return;
@@ -157,7 +158,7 @@ export default function AnalysisDetailPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-lg font-bold text-white mb-2">Couldn't load analysis</h2>
+        <h2 className="text-lg font-bold text-white mb-2">Couldn&apos;t load analysis</h2>
         <p className="text-sm text-slate-500 mb-5">{error ?? 'Something went wrong.'}</p>
         <button
           onClick={() => router.back()}
@@ -255,7 +256,37 @@ export default function AnalysisDetailPage() {
       {/* Job description snippet */}
       <div className="mb-6 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-4">
         <p className="font-semibold text-slate-500 uppercase tracking-wider mb-2">Job Description</p>
-        <p className="text-slate-400">{jobDescription.description}</p>
+        <div className="relative">
+          <div
+            className={`text-slate-400 whitespace-pre-wrap leading-relaxed transition-all duration-300 ${
+              !showFullDescription ? 'line-clamp-4' : ''
+            }`}
+          >
+            {jobDescription.description}
+          </div>
+          {jobDescription.description.length > 200 && (
+            <button
+              onClick={() => setShowFullDescription((v) => !v)}
+              className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-teal-400 hover:text-teal-300 transition-colors cursor-pointer"
+            >
+              {showFullDescription ? (
+                <>
+                  Show less
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                  </svg>
+                </>
+              ) : (
+                <>
+                  Show more
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Score summary grid */}
